@@ -1,25 +1,26 @@
-name: Cache Workflow
+name: Cache Dependencies
 
 on:
   push:
-    branches: [ "main" ]
+  pull_request:
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Cache dependencies
       - name: Cache dependencies
-        id: cache-deps
+        id: cache
         uses: actions/cache@v4
         with:
-          path: ~/.npm   # or ~/.cache/pip if Python, adjust for your language
-          key: cache-22cc6ff
+          path: ~/.cache/pip
+          key: cache-22cc6ff-${{ runner.os }}
+          restore-keys: |
+            cache-22cc6ff-
 
-      # Step that echoes cache result
       - name: prime-cache-22cc6ff
-        run: echo "Cache result: ${{ steps.cache-deps.outputs.cache-hit }}"
+        run: echo "Cache hit: ${{ steps.cache.outputs.cache-hit }}"
